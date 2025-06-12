@@ -18,26 +18,30 @@ describe('LotteryHistoryService', () => {
     completed: true
   };
 
-  const mockContract = {
+  // Factory method to create mock contract
+  const createMockContract = () => ({
     getLotteryRound: vi.fn(),
     getTotalRounds: vi.fn(),
     getRecentRounds: vi.fn()
-  };
+  });
 
   vi.mock('ethers', () => {
     return {
       ethers: {
-        Contract: vi.fn(() => mockContract)
+        Contract: vi.fn((address, abi, provider) => createMockContract())
       }
     };
   });
 
-  const service = new LotteryHistoryService(mockProvider, contractAddress);
-
   it('should fetch a specific lottery round', async () => {
+    const mockContract = createMockContract();
+    vi.spyOn(ethers, 'Contract').mockReturnValue(mockContract);
+
     mockContract.getLotteryRound.mockResolvedValue(mockContractRound);
 
+    const service = new LotteryHistoryService(mockProvider, contractAddress);
     const round = await service.getLotteryRound(0);
+    
     expect(round).toEqual({
       roundNumber: 1,
       timestamp: 1623456789,
@@ -49,22 +53,36 @@ describe('LotteryHistoryService', () => {
   });
 
   it('should handle errors when fetching a round', async () => {
+    const mockContract = createMockContract();
+    vi.spyOn(ethers, 'Contract').mockReturnValue(mockContract);
+
     mockContract.getLotteryRound.mockRejectedValue(new Error('Fetch failed'));
 
+    const service = new LotteryHistoryService(mockProvider, contractAddress);
     await expect(service.getLotteryRound(0)).rejects.toThrow(LotteryHistoryError);
   });
 
   it('should fetch total number of rounds', async () => {
+    const mockContract = createMockContract();
+    vi.spyOn(ethers, 'Contract').mockReturnValue(mockContract);
+
     mockContract.getTotalRounds.mockResolvedValue(5n);
 
+    const service = new LotteryHistoryService(mockProvider, contractAddress);
     const totalRounds = await service.getTotalRounds();
+    
     expect(totalRounds).toBe(5);
   });
 
   it('should fetch recent rounds', async () => {
+    const mockContract = createMockContract();
+    vi.spyOn(ethers, 'Contract').mockReturnValue(mockContract);
+
     mockContract.getRecentRounds.mockResolvedValue([mockContractRound]);
 
+    const service = new LotteryHistoryService(mockProvider, contractAddress);
     const rounds = await service.getRecentRounds();
+    
     expect(rounds).toHaveLength(1);
     expect(rounds[0].roundNumber).toBe(1);
   });
