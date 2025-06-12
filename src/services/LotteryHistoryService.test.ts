@@ -24,11 +24,13 @@ describe('LotteryHistoryService', () => {
     getRecentRounds: vi.fn()
   };
 
-  vi.mock('ethers', () => ({
-    ethers: {
-      Contract: vi.fn(() => mockContract)
-    }
-  }));
+  vi.mock('ethers', () => {
+    return {
+      ethers: {
+        Contract: vi.fn(() => mockContract)
+      }
+    };
+  });
 
   const service = new LotteryHistoryService(mockProvider, contractAddress);
 
