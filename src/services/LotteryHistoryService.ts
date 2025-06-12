@@ -4,7 +4,48 @@ import {
   LotteryHistoryParams, 
   LotteryHistoryError 
 } from '../types/LotteryTypes';
-import LotteryRoundABI from '../contracts/LotteryRound.sol/LotteryHistoryTracker.json';
+
+// Manual ABI definition to avoid import issues
+const LotteryHistoryTrackerABI = [
+  {
+    "inputs": [{"internalType": "uint256", "name": "_roundIndex", "type": "uint256"}],
+    "name": "getLotteryRound",
+    "outputs": [{"components": [
+      {"internalType": "uint256", "name": "roundNumber", "type": "uint256"},
+      {"internalType": "uint256", "name": "timestamp", "type": "uint256"},
+      {"internalType": "address", "name": "winner", "type": "address"},
+      {"internalType": "uint256", "name": "potSize", "type": "uint256"},
+      {"internalType": "uint256", "name": "ticketsSold", "type": "uint256"},
+      {"internalType": "bool", "name": "completed", "type": "bool"}
+    ], "internalType": "struct LotteryRoundInfo", "name": "", "type": "tuple"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalRounds",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "uint256", "name": "_startIndex", "type": "uint256"},
+      {"internalType": "uint256", "name": "_limit", "type": "uint256"}
+    ],
+    "name": "getRecentRounds",
+    "outputs": [{"components": [
+      {"internalType": "uint256", "name": "roundNumber", "type": "uint256"},
+      {"internalType": "uint256", "name": "timestamp", "type": "uint256"},
+      {"internalType": "address", "name": "winner", "type": "address"},
+      {"internalType": "uint256", "name": "potSize", "type": "uint256"},
+      {"internalType": "uint256", "name": "ticketsSold", "type": "uint256"},
+      {"internalType": "bool", "name": "completed", "type": "bool"}
+    ], "internalType": "struct LotteryRoundInfo[]", "name": "", "type": "tuple[]"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
 
 /**
  * Service for interacting with Lottery Round History
@@ -20,7 +61,7 @@ export class LotteryHistoryService {
   constructor(provider: ethers.Provider, contractAddress: string) {
     this.contract = new ethers.Contract(
       contractAddress, 
-      LotteryRoundABI.abi, 
+      LotteryHistoryTrackerABI, 
       provider
     );
   }
