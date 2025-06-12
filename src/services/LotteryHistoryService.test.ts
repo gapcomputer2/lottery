@@ -71,7 +71,7 @@ describe('LotteryHistoryService', () => {
     const service = new LotteryHistoryService(mockProvider, contractAddress);
     const totalRounds = await service.getTotalRounds();
     
-    expect(totalRounds).toBe(5);
+    expect(totalRounds).toBe(5n);
   });
 
   it('should fetch recent rounds', async () => {
