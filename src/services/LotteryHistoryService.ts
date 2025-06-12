@@ -84,7 +84,7 @@ export class LotteryHistoryService {
    * Fetch total number of completed lottery rounds
    * @returns Promise resolving to total number of rounds
    */
-  async getTotalRounds(): Promise<number> {
+  async getTotalRounds(): Promise<bigint> {
     try {
       return await this.contract.getTotalRounds();
     } catch (error) {
